@@ -22,8 +22,10 @@ const bookingSchema = new Schema ({
     type : String,
     // enum: ['confirmed', 'pending', 'canceled'],
     default: 'pending',
-   }, 
-},
+   }
+},{
+    timestamps : true
+}
 )
 const Booking = model ('Booking',bookingSchema)
 

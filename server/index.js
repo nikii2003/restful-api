@@ -47,6 +47,7 @@ app.get('/api/v2/bookings',async (req,res)=>{
    })
 })
 
+//get api using id
 app.get('/api/v3/bookings/:id',async (req,res)=>{
    const {id}=req.params
 
@@ -60,6 +61,7 @@ app.get('/api/v3/bookings/:id',async (req,res)=>{
 
 })
 
+//put api using id
 app.put('/api/v4/bookings/:id',async (req,res)=>{
    const {customerName,customerEmail,customerInDate,checkOutDate,totalPrice}=req.body
    const {id}=req.params
@@ -78,6 +80,55 @@ res.json({
    message : "updated product !..."
 })
 
+})
+
+// delete using id
+app.delete('/api/v5/bookings/:id', async ( req, res)=>{
+   const {id}=req.params
+
+   const deleteBooking = await Booking.deleteOne({_id : id})
+
+   res.json({
+      success : true,
+      data : deleteBooking,
+      message : "delete Booking successfully..."
+   })
+   
+})
+
+//patch using id only update specific on1 
+app.patch('/api/v6/bookings/:id',async (req,res)=>{
+const {id}=req.params
+const {totalPrice}=req.body
+const totalPrice_PRIORITY_MAP ={
+   pending :0,
+   shipped : 1,
+   delivered : 2,
+   returned : 3,
+   cancelled :4,
+   rejected : 5
+ }
+ const updatedspesific =await Booking.findById(id)
+ const currenttotalPrice= Booking.totalPrice
+const newPrice = totalPrice_PRIORITY_MAP[totalPrice];
+const currentPrice =  totalPrice_PRIORITY_MAP[currenttotalPrice]
+
+if(currentPrice > newPrice){
+    return res.json({
+      success:false,
+      message:"you cannot move"
+    })
+}
+await Booking.updateOne({_id:id}, {$set:{
+   totalPrice : totalPrice
+}})
+  const updatedBookingspecific = await Booking.findOne({ _id: id });
+
+res.json({
+   success:true,
+   data:updatedBookingspecific,
+   message : "update specific one"
+})
 })
 const PORT = process.env.PORT || 5000;
 
