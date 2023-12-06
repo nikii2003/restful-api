@@ -46,6 +46,39 @@ app.get('/api/v2/bookings',async (req,res)=>{
       message : " Fetch all Boking detail successfully !"
    })
 })
+
+app.get('/api/v3/bookings/:id',async (req,res)=>{
+   const {id}=req.params
+
+   const specificbooking = await Booking.findOne({_id:id})
+
+   res.json({
+      success : true,
+      data : specificbooking,
+      message : "specific booking!"
+   })
+
+})
+
+app.put('/api/v4/bookings/:id',async (req,res)=>{
+   const {customerName,customerEmail,customerInDate,checkOutDate,totalPrice}=req.body
+   const {id}=req.params
+ await Booking.updateOne({_id:id} , {$set: {
+      customerName :customerName ,
+      customerEmail :  customerEmail,
+      customerInDate : customerInDate,
+      checkOutDate:checkOutDate,
+      totalPrice : totalPrice 
+   }})
+   const updateBooking = await Booking.findOne({_id:id})
+
+res.json({
+   success : true,
+   data : updateBooking,
+   message : "updated product !..."
+})
+
+})
 const PORT = process.env.PORT || 5000;
 
 app.listen( PORT,()=>{
