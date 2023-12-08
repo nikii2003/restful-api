@@ -133,7 +133,7 @@ res.json({
 })
 
 // bus post api
-app.post( '/api/v1/bus', async (req,res)=>{
+app.post( '/api/v1/buses', async (req,res)=>{
 const {type,busNo,ticket,time,busseatsAvail}=req.body
 
 const Buses = new Bus ({
@@ -154,7 +154,8 @@ res.json({
 
 })
 
-app.get('/api/v2/bus',async (req,res)=>{
+//bus get all buses
+app.get('/api/v2/buses',async (req,res)=>{
 
     const allbusesinfo =  await Bus.find()
 
@@ -165,6 +166,57 @@ app.get('/api/v2/bus',async (req,res)=>{
     })
 
 })
+
+//bus get specific bus find
+app.get('/api/v3/buses/:id', async (req,res)=>{
+   const {id}=req.params
+
+   const specificBus = await Bus.findOne({_id:id})
+
+   res.json({
+      success:true,
+      data:specificBus,
+      message : "find bus successfully !"
+   })
+
+})
+
+app.put('/api/v4/buses/:id',async (req,res)=>{
+const {id}=req.params
+const {type,time,busseatsAvail,busNo,ticket}=req.body
+
+ await Bus.updateOne({_id:id},{$set:{
+   type:type,
+   time:time,
+   busseatsAvail : busseatsAvail,
+   ticket: ticket,
+   busNo:busNo
+}})
+const updateBus=await Bus.findOne({_id:id})
+
+res.json({
+   success:true,
+   data:updateBus,
+   message:"successfully updated !"
+})
+})
+
+app.delete('/api/v5/buses/:id', async (req,res)=>{
+   const {id}=req.params
+
+   const deletebusInfo = await Bus.deleteOne({_id:id})
+
+   res.json({
+      success :  true,
+      data:deletebusInfo,
+      message:"deleted busInfo successfully !"
+   })
+})
+app.patch('/api/v5/buses/id',async (req,res)=>{
+
+})
+
+
 const PORT = process.env.PORT || 5000;
 
 app.listen( PORT,()=>{
