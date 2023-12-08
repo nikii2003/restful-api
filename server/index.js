@@ -1,7 +1,8 @@
 import express from 'express'
-import mongoose from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import dotenv from 'dotenv'
 import Booking from './../server/models/booking.js';
+import Bus from './models/bus.js';
 dotenv.config();
 
 const app= express()
@@ -129,6 +130,40 @@ res.json({
    data:updatedBookingspecific,
    message : "update specific one"
 })
+})
+
+// bus post api
+app.post( '/api/v1/bus', async (req,res)=>{
+const {type,busNo,ticket,time,busseatsAvail}=req.body
+
+const Buses = new Bus ({
+
+   type,
+   busNo,
+   ticket,
+   time,
+   busseatsAvail
+})
+const savebusinfo = await Buses.save()
+
+res.json({
+   success :  true,
+   data : savebusinfo,
+   message :"Bus information added successfully !"
+})
+
+})
+
+app.get('/api/v2/bus',async (req,res)=>{
+
+    const allbusesinfo =  await Bus.find()
+
+    res.json({
+      success : true,
+      data:allbusesinfo,
+      message : "all bus details !"
+    })
+
 })
 const PORT = process.env.PORT || 5000;
 
